@@ -77,7 +77,7 @@ nodesExpand = 0
 
 def main():
     global searchFunction
-    print('Welcome to Angela Su 862119568 8 puzzle solver.')
+    print('Welcome to Angela Su 8 puzzle solver.')
 
 #get the user inputs for default or user puzzle
     userInput = input('Type "1" to use default puzzle, or "2" to enter your own puzzle.')
