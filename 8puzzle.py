@@ -1,5 +1,6 @@
 import queue
 import time
+from tkinter.font import families
 
 #NOTES:
 #node : h(n), g(n)
@@ -56,12 +57,18 @@ def printResults(node, start, end):
 def uniformCost(state):
     return 0
 
+#return sum of differences btw current and goal (dont include zeroStates)
 def misTiles(state):
-    return 0
+    diffs = 0
+    for i in range(len(state)):
+        if(state[i] != 0 and state[i] != i + 1):
+            diffs += 1
+    return diffs
 
 def eucledDist(state):
     return 0
 
+#main beef alg
 def aStar(puz: Puzzle, addNodes):
     return 0
 
@@ -69,6 +76,26 @@ def addNodes(queue, families, depth):
     for family in families:
         queue.put(searchFunction(family[0]) + depth, depth, family)
     return queue
+
+def expand(fam):
+    families = []
+    ops = [Puzzle.downShift, Puzzle.leftShift, Puzzle.rightShift, Puzzle.upShift]
+    child = fam[0]
+    parent = fam[1]
+    zeroIndex = child.index(0)
+
+    #cuts down on branches, dont compare gChild with gParent
+    for shift in ops:
+        gChild = shift(fam, zeroIndex)
+        if(not isEqual(gChild, parent)):
+            families.append([gChild, child])
+    return families
+
+def isEqual(state1, state2):
+    for i in range(len(state1)):
+        if(state1[i] != state2[i] or len(state1) != len(state2)):
+            return False
+    return True
 
 #global variables
 searchFunction = uniformCost
@@ -80,7 +107,7 @@ def main():
     print('Welcome to Angela Su 8 puzzle solver.')
 
 #get the user inputs for default or user puzzle
-    userInput = input('Type "1" to use default puzzle, or "2" to enter your own puzzle.')
+    userInput = input('Type "1" to use default puzzle, or "2" to enter your own puzzle.\n')
     userNum = int(userInput) 
 
     #Basic Puzzle (if userInput is 1)
@@ -89,9 +116,9 @@ def main():
     #Custom Puzzle (if userInput is 2)
     elif userNum == 2:
         print('Enter your puzzle, use a zero to represent the blank\n')
-        row1 = input('Enter the first row, use space or tabs between numbers')
-        row2 = input('Enter the second row, use space or tabs between numbers')
-        row3 = input('Enter the third row, use space or tabs between numbers')
+        row1 = input('Enter the first row, use space or tabs between numbers \n')
+        row2 = input('Enter the second row, use space or tabs between numbers \n')
+        row3 = input('Enter the third row, use space or tabs between numbers \n')
 
         print('\n')
 
