@@ -70,11 +70,38 @@ def eucledDist(state):
 
 #main beef alg
 def aStar(puz: Puzzle, addNodes):
-    return 0
+    global maxQSize
+    global nodesExpand
+
+    #use the q lib
+    nodes = queue.PriorityQueue()
+
+    #check the order of the nodes
+    nodes.put(createNode([puz.initialState, [0]], 0))
+
+    while(1):
+        if (nodes.empty()):
+            print("no solution")
+            return -1
+        else:
+            node = nodes.get()
+            print(f"The best state to expand with a g(n) = {node[1]} and h(n) = {node[0] - node[1]} is...")
+            puz.print(node[2][0])
+            if (misTiles(node[2][0]) == 0): 
+                return node
+            else:
+                nodesExpand += 1
+                nodes = addNodes(nodes, expand(node[2]), node[1] + 1)
+                if nodes.qsize() > maxQueueSize:
+                    maxQueueSize = nodes.qsize()
+
+def createNode(fam, depth):
+    return [searchFunction(fam[0]) + depth, depth, fam]
+
 
 def addNodes(queue, families, depth):
-    for family in families:
-        queue.put(searchFunction(family[0]) + depth, depth, family)
+    for fam in families:
+        queue.put(createNode(fam, depth))
     return queue
 
 def expand(fam):
@@ -115,10 +142,10 @@ def main():
         puz = (['1', '2', '3'], ['4', '0', '6'], ['7', '5', '8'])
     #Custom Puzzle (if userInput is 2)
     elif userNum == 2:
-        print('Enter your puzzle, use a zero to represent the blank\n')
-        row1 = input('Enter the first row, use space or tabs between numbers \n')
-        row2 = input('Enter the second row, use space or tabs between numbers \n')
-        row3 = input('Enter the third row, use space or tabs between numbers \n')
+        print('Enter your puzzle, use a zero to represent the blank')
+        row1 = input('Enter the first row, use space or tabs between numbers ')
+        row2 = input('Enter the second row, use space or tabs between numbers ')
+        row3 = input('Enter the third row, use space or tabs between numbers ')
 
         print('\n')
 
@@ -140,10 +167,10 @@ def main():
                     '3) A* with the Eucledian distance heuristic. \n')
 
     #chance input to a number
-    alg = int(userAlg)
+    #alg = int(userAlg)
 
     #run the algorithm of choice and print the output
-    if(alg == '1'):
+    if(userAlg == '1'):
         print('Run Uniform Cost Search \n')
         searchFunction = uniformCost
 
@@ -153,7 +180,7 @@ def main():
 
         printResults(node, start, end)
 
-    elif(alg == '2'):
+    elif(userAlg == '2'):
         print('Run A* with the Misplaced Tile heuristic \n')
         searchFunction = misTiles
 
@@ -163,7 +190,7 @@ def main():
 
         printResults(node, start, end)
 
-    elif(alg == '3'):
+    elif(userAlg == '3'):
         print('Run A* with the Eucledian distance heuristic  \n')
         searchFunction = eucledDist
 
